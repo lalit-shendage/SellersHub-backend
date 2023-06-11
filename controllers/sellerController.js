@@ -43,6 +43,7 @@ const login = async (req, res) => {
 
     // Check if the seller exists
     const seller = await Seller.findOne({ email });
+
     if (!seller) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -55,10 +56,10 @@ const login = async (req, res) => {
 
     // Create and sign a JWT token
     const token = jwt.sign({ sellerId: seller._id }, JWT_SECRET, {
-      expiresIn: '24h',
+     
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token ,seller});
   } catch (error) {
     res.status(500).json({ message: 'Login failed' });
   }
@@ -81,26 +82,27 @@ const updateSellerInfo = async (req, res) => {
     const { address, gst, logo, storeTimings } = req.body;
     const sellerId = req.user.sellerId;
 
-    // Find the seller in the database and update their information
-    const seller = await Seller.findByIdAndUpdate(
-      sellerId,
-      {
-        address,
-        gst,
-        logo,
-        storeTimings,
-      },
-      { new: true }
-    );
-
+    // Find the seller in the database
+    const seller = await Seller.findById(sellerId);
     if (!seller) {
       return res.status(404).json({ message: 'Seller not found' });
     }
+
+    // Update the seller object with new properties
+    seller.address = address;
+    seller.gst = gst;
+    seller.logo = logo;
+    seller.storeTimings = storeTimings;
+
+    // Save the updated seller document
+    await seller.save();
+   
 
     res.status(200).json({ message: 'Seller information updated successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to update seller information' });
   }
 };
+
 
 module.exports = { register, login, dashboard, updateSellerInfo };

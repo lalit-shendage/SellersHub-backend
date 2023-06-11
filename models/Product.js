@@ -32,6 +32,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   }],
+  mrp: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Product = mongoose.model('Product', productSchema);
