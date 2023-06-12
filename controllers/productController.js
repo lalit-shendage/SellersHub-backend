@@ -2,7 +2,7 @@ const Product = require('../models/Product');
 
 const addProduct = async (req, res) => {
   try {
-    const { name, mrp, sellers, category, subCategory, imgurl } = req.body;
+    const { name, mrp, sellers, category, subCategory, images } = req.body;
     const seller = sellers[0].seller;
     const sellingPrice = sellers[0].sellingPrice;
     const quantity = sellers[0].quantity;
@@ -33,7 +33,7 @@ const addProduct = async (req, res) => {
     }
     
     // Product doesn't exist, create a new product
-    const productData = { name, mrp, category, subCategory, imgurl, sellers: [{ seller, sellingPrice, quantity }] };
+    const productData = { name, mrp, category, subCategory, images, sellers: [{ seller, sellingPrice, quantity }] };
     const product = new Product(productData);
     await product.save();
     res.status(200).json({ message: 'Product added successfully' });
